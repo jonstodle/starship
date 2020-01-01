@@ -59,17 +59,15 @@ pub fn get_prompt(context: Context) -> String {
 
     for module in printable {
         // Skip printing the prefix of a module after the line_break
-        let len = if print_without_prefix {
-            segments_len = 0;
-            module.segments_len_without_prefix()
+        if print_without_prefix {
+            segments_len = module.segments_len(false)
         } else {
-            module.segments_len()
+            segments_len += module.segments_len(true)
         };
-        segments_len += len;
 
-        if max_len > 0 && segments_len > max_len - 1 {
+        if max_len > 0 && segments_len > max_len {
             write!(buf, "{}", modules::handle("line_break", &context).unwrap()).unwrap();
-            segments_len = module.segments_len_without_prefix();
+            segments_len = module.segments_len(false);
             print_without_prefix = true;
         }
 
